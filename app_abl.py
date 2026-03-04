@@ -97,7 +97,7 @@ CATEGORIAS = {
 
 st.set_page_config(page_title="Knowledgism ABL Profiler", layout="wide")
 st.title("📊 Perfil de Capacidades y Estado de Ánimo (ABL)")
-st.markdown("Basado en la filosofía de **Alan C. Walter**. Responde con honestidad para ver tu zona de atención.")
+st.markdown("Created By **José Antonio Camacho**. [veco] Responde con honestidad para ver tu zona de atención.")
 
 # --- SIDEBAR: DATOS DEL SUJETO ---
 with st.sidebar:
