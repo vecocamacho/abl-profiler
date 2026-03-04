@@ -6,12 +6,12 @@ import os
 
 # --- 1. CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(
-    page_title="Knowledgism ABL Profiler **By Jose Antonio Camacho** veco",
+    page_title="Knowledgism ABL Profiler By Jose Antonio Camacho",
     page_icon="favicon.png",
     layout="centered"
 )
 
-# --- 2. IDENTIDAD VISUAL (LOGOS Y TÍTULO) ---
+# --- 2. IDENTIDAD VISUAL ---
 c1, c2, c3 = st.columns([1, 2, 1])
 with c2:
     if os.path.exists("logo.png"):
@@ -49,7 +49,7 @@ PREGUNTAS_ES = {
     29: "¿Se cansa al leer un libro?", 30: "Si algo es importante, ¿lo lleva a cabo?",
     31: "¿Puede aceptar las críticas fácilmente?", 32: "¿Planifica sus actividades?",
     33: "¿Es usualmente sincero con los demás?", 34: "¿Tiene habilidades psíquicas?",
-    35: "¿Puede lograr que otros realizaren actividades con eficacia?", 36: "¿Es importante su propia paz mental?",
+    35: "¿Puede lograr que otros realicen actividades con eficacia?", 36: "¿Es importante su propia paz mental?",
     37: "¿Podría llevar a cabo una meta en 6 meses?", 38: "¿Enfrenta situaciones dolorosas?",
     39: "¿Tiene una buena actitud ante la vida?", 40: "¿Prefiere no tomar decisiones?",
     41: "¿Tiende a ser descuidado y desordenado?", 42: "¿Corregiría a alguien que está equivocado?",
@@ -85,6 +85,7 @@ CATEGORIAS = {
 # --- 4. ENTRADA DE DATOS ---
 nombre = st.text_input("Nombre del Evaluado", placeholder="Escriba aquí...")
 
+# --- 5. FORMULARIO ---
 with st.form("test_completo"):
     respuestas = {}
     for cat, rango in CATEGORIAS.items():
@@ -98,14 +99,35 @@ with st.form("test_completo"):
                     horizontal=True, label_visibility="collapsed"
                 )
                 if q_id != rango[-1]:
-                    st.divider() # Usamos st.divider() para evitar errores de HTML largo
+                    st.divider()
 
     enviado = st.form_submit_button("GENERAR PERFIL PROFESIONAL")
 
-# --- 5. RESULTADOS ---
+# --- 6. RESULTADOS ---
 if enviado:
     if not nombre:
         st.error("⚠️ Ingrese un nombre.")
     else:
         scores = {}
         for cat, rango in CATEGORIAS.items():
+            puntos = 0
+            for q_id in rango:
+                val = 1 if respuestas[q_id] == "Sí" else (-1 if respuestas[q_id] == "No" else 0)
+                if q_id in PREGUNTAS_NEGATIVAS: val *= -1
+                puntos += val
+            max_p = len(rango)
+            scores[cat] = ((puntos + max_p) / (2 * max_p)) * 100
+
+        st.success(f"Análisis finalizado para {nombre}")
+        
+        fig, ax = plt.subplots(figsize=(10, 5))
+        ax.axhspan(66, 100, color='#2ecc71', alpha=0.2)
+        ax.axhspan(33, 66, color='#f1c40f', alpha=0.2)
+        ax.axhspan(0, 33, color='#e74c3c', alpha=0.2)
+        
+        ax.plot(list(scores.keys()), list(scores.values()), marker='o', color='black', linewidth=2.5)
+        ax.set_ylim(0, 100)
+        st.pyplot(fig)
+
+        resumen = {"Sección": list(scores.keys()), "Resultado": [f"{round(v,1)}%" for v in scores.values()]}
+        st.table(pd.DataFrame(resumen))
