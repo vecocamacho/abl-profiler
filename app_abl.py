@@ -85,11 +85,17 @@ CATEGORIAS = {
 # --- 4. ENTRADA DE DATOS ---
 nombre = st.text_input("Nombre del Evaluado", placeholder="Escriba aquí...")
 
-# --- 5. FORMULARIO ---
+# --- 5. FORMULARIO CON PESTAÑAS (TABS) ---
 with st.form("test_completo"):
+    # Creamos las 6 pestañas con los nombres de las categorías
+    nombres_tabs = list(CATEGORIAS.keys())
+    tabs = st.tabs(nombres_tabs)
+    
     respuestas = {}
-    for cat, rango in CATEGORIAS.items():
-        with st.container(border=True):
+    
+    # Llenamos cada pestaña con sus preguntas correspondientes
+    for i, (cat, rango) in enumerate(CATEGORIAS.items()):
+        with tabs[i]:
             st.subheader(f"📍 {cat}")
             for q_id in rango:
                 st.write(f"**{q_id}. {PREGUNTAS_ES[q_id]}**")
@@ -101,6 +107,7 @@ with st.form("test_completo"):
                 if q_id != rango[-1]:
                     st.divider()
 
+    st.write("") # Espacio antes del botón
     enviado = st.form_submit_button("GENERAR PERFIL PROFESIONAL")
 
 # --- 6. RESULTADOS ---
