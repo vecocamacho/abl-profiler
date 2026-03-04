@@ -4,6 +4,41 @@ import pandas as pd
 from datetime import datetime
 import os
 
+# --- 1. CONFIGURACIÓN DE LA PESTAÑA (ICONO DEL NAVEGADOR) ---
+st.set_page_config(
+    page_title="Knowledgism ABL Profiler",
+    page_icon="favicon.png", # Usa tu archivo favicon.png
+    layout="centered"
+)
+
+# --- 2. LOGO PRINCIPAL (SUPERIOR) ---
+# Creamos columnas para centrar el logo principal arriba
+c1, c2, c3 = st.columns([1, 3, 1])
+with c2:
+    if os.path.exists("logo.png"):
+        st.image("logo.png", use_container_width=True)
+    else:
+        st.write("### [Inserta aquí logo.png]")
+
+st.divider()
+
+# --- 3. TÍTULO CON LOGO MINI ---
+# Aquí reemplazamos el emoji 📊 por tu logo_mini.png
+col_m1, col_m2 = st.columns([0.15, 0.85]) # Ajuste fino de proporciones
+
+with col_m1:
+    if os.path.exists("logo_mini.png"):
+        st.image("logo_mini.png", width=60)
+    else:
+        st.write("## 🚀") # Temporal si no encuentra el archivo
+
+with col_m2:
+    # Alineamos el texto un poco hacia abajo para que case con el logo
+    st.markdown("<h1 style='margin-top: -5px;'>Perfil ABL</h1>", unsafe_allow_html=True)
+
+st.markdown("<p style='color: gray; font-style: italic; margin-top: -15px;'>Análisis Profesional de Capacidades</p>", unsafe_allow_html=True)
+st.write("") # Espacio en blanco extra
+
 # --- Questionario ---
 PREGUNTAS_ES = {
     1: "¿Se siente bien consigo mismo?",
