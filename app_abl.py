@@ -4,42 +4,36 @@ import pandas as pd
 from datetime import datetime
 import os
 
-# --- 1. CONFIGURACIÓN DE LA PESTAÑA (ICONO DEL NAVEGADOR) ---
+# --- 1. CONFIGURACIÓN DE PÁGINA (PESTAÑA DEL NAVEGADOR) ---
 st.set_page_config(
-    page_title="Knowledgism ABL Profiler",
-    page_icon="favicon.png", # Usa tu archivo favicon.png
+    page_title="Knowledgism ABL Profiler, By **Jose Antonio Camacho** veco",
+    page_icon="favicon.png",
     layout="centered"
 )
 
-# --- 2. LOGO PRINCIPAL (SUPERIOR) ---
-# Creamos columnas para centrar el logo principal arriba
-c1, c2, c3 = st.columns([1, 3, 1])
+# --- 2. IDENTIDAD VISUAL (LOGOS Y TÍTULO) ---
+# Logo Principal Centrado
+c1, c2, c3 = st.columns([1, 2, 1])
 with c2:
     if os.path.exists("logo.png"):
         st.image("logo.png", use_container_width=True)
-    else:
-        st.write("### [Inserta aquí logo.png]")
 
 st.divider()
 
-# --- 3. TÍTULO CON LOGO MINI ---
-# Aquí reemplazamos el emoji 📊 por tu logo_mini.png
-col_m1, col_m2 = st.columns([0.15, 0.85]) # Ajuste fino de proporciones
-
+# Título con Logo Mini (reemplaza al emoji 📊)
+col_m1, col_m2 = st.columns([0.2, 0.8])
 with col_m1:
     if os.path.exists("logo_mini.png"):
-        st.image("logo_mini.png", width=60)
+        st.image("logo_mini.png", width=70)
     else:
-        st.write("## 🚀") # Temporal si no encuentra el archivo
+        st.write("## 🚀") # Temporal si no hay archivo
 
 with col_m2:
-    # Alineamos el texto un poco hacia abajo para que case con el logo
-    st.markdown("<h1 style='margin-top: -5px;'>Perfil ABL</h1>", unsafe_allow_html=True)
+    # Ajuste de margen para alinear texto con imagen
+    st.markdown("<h1 style='margin-top: -5px; padding-bottom: 0;'>Perfil ABL</h1>", unsafe_allow_html=True)
+    st.markdown("<p style='color: gray; font-style: italic; margin-top: -10px;'>Análisis Profesional de Capacidades</p>", unsafe_allow_html=True)
 
-st.markdown("<p style='color: gray; font-style: italic; margin-top: -15px;'>Análisis Profesional de Capacidades</p>", unsafe_allow_html=True)
-st.write("") # Espacio en blanco extra
-
-# --- Questionario ---
+# --- 3. DICCIONARIO DE PREGUNTAS (UNA POR RENGLÓN) ---
 PREGUNTAS_ES = {
     1: "¿Se siente bien consigo mismo?",
     2: "¿Se le ocurren cosas para hacer?",
@@ -117,8 +111,6 @@ PREGUNTAS_ES = {
     74: "¿Comete a menudo errores por descuido?"
 }
 
-
-# Preguntas con lógica inversa (responder "Sí" resta puntos)
 PREGUNTAS_NEGATIVAS = [5, 7, 8, 9, 10, 11, 13, 16, 18, 19, 20, 22, 23, 24, 25, 26, 29, 40, 41, 43, 46, 47, 48, 50, 51, 52, 55, 58, 61, 64, 65, 66, 67, 68, 71, 72, 73, 74]
 
 CATEGORIAS = {
@@ -130,82 +122,26 @@ CATEGORIAS = {
     "Cuerpo": range(62, 75)
 }
 
-st.set_page_config(page_title="Knowledgism ABL Profiler", layout="wide")
-st.title("📊 Perfil de Capacidades y Estado de Ánimo (ABL)")
-st.markdown("Created By **José Antonio Camacho**. [veco] Responde con honestidad para ver tu zona de atención.")
+# --- 4. ENTRADA DE USUARIO ---
+nombre = st.text_input("Nombre del Evaluado", placeholder="Escriba el nombre completo...")
 
-# --- SIDEBAR: DATOS DEL SUJETO ---
-with st.sidebar:
-    st.header("Datos del Evaluado")
-    nombre = st.text_input("Nombre Completo", placeholder="Ej: Juan Pérez")
-    if st.button("Limpiar Test"):
-        st.rerun()
-
-# --- CUERPO DEL TEST ---
-respuestas = {}
-tabs = st.tabs(list(CATEGORIAS.keys()))
-
-for i, (cat, rango) in enumerate(CATEGORIAS.items()):
-    with tabs[i]:
-        st.subheader(f"Sección: {cat}")
-        for q_id in rango:
-            col1, col2 = st.columns([0.7, 0.3])
-            with col1:
-                st.write(f"**{q_id}.** {PREGUNTAS_ES[q_id]}")
-            with col2:
-                respuestas[q_id] = st.radio(f"R{q_id}", ["Sí", "Tal vez", "No"], index=1, key=f"q_{q_id}", label_visibility="collapsed")
-
-# --- PROCESAMIENTO ---
-if st.button("GENERAR RESULTADOS Y GUARDAR"):
-    if not nombre:
-        st.error("Por favor, ingresa un nombre antes de continuar.")
-    else:
-        scores_finales = {}
-        for cat, rango in CATEGORIAS.items():
-            puntos = 0
+# --- 5. FORMULARIO CON DISEÑO DE CONTENEDORES ---
+with st.form("test_completo"):
+    respuestas = {}
+    
+    for cat, rango in CATEGORIAS.items():
+        # Cada categoría en un recuadro elegante
+        with st.container(border=True):
+            st.subheader(f"📍 {cat}")
             for q_id in rango:
-                val = 1 if respuestas[q_id] == "Sí" else (-1 if respuestas[q_id] == "No" else 0)
-                if q_id in PREGUNTAS_NEGATIVAS: val *= -1
-                puntos += val
-            
-            # Normalización 0-100
-            max_p = len(rango)
-            score_norm = ((puntos + max_p) / (2 * max_p)) * 100
-            scores_finales[cat] = score_norm
-
-        # --- MOSTRAR GRÁFICA ---
-        st.divider()
-        col_graf, col_info = st.columns([0.6, 0.4])
-        
-        with col_graf:
-            fig, ax = plt.subplots(figsize=(10, 6))
-            ax.axhspan(66, 100, color='#2ecc71', alpha=0.3) # Verde
-            ax.axhspan(33, 66, color='#f1c40f', alpha=0.3) # Amarillo
-            ax.axhspan(0, 33, color='#e74c3c', alpha=0.3)  # Rojo
-            
-            ejes = list(scores_finales.keys())
-            valores = list(scores_finales.values())
-            
-            ax.plot(ejes, valores, marker='o', color='black', linewidth=3)
-            ax.set_ylim(0, 100)
-            ax.set_title(f"Perfil ABL - {nombre}")
-            st.pyplot(fig)
-
-        with col_info:
-            st.success(f"¡Test de {nombre} procesado!")
-            for c, s in scores_finales.items():
-                zona = "VERDE" if s > 66 else ("AMARILLA" if s > 33 else "ROJA")
-                st.write(f"**{c}:** {int(s)}% - Zona {zona}")
-
-        # --- GUARDAR EN CSV ---
-        filename = "historial_streamlit_abl.csv"
-        registro = {"Nombre": nombre, "Fecha": datetime.now().strftime("%Y-%m-%d %H:%M")}
-        registro.update({k: round(v, 2) for k, v in scores_finales.items()})
-        
-        df_new = pd.DataFrame([registro])
-        if not os.path.isfile(filename):
-            df_new.to_csv(filename, index=False)
-        else:
-            df_new.to_csv(filename, mode='a', header=False, index=False)
-        
-        st.info(f"Datos guardados en `{filename}`")
+                st.write(f"**{q_id}. {PREGUNTAS_ES[q_id]}**")
+                respuestas[q_id] = st.radio(
+                    f"label_{q_id}", 
+                    ["Sí", "Tal vez", "No"], 
+                    index=1, 
+                    key=f"q_{q_id}", 
+                    horizontal=True, 
+                    label_visibility="collapsed"
+                )
+                if q_id != rango[-1]: # No poner línea en la última pregunta del bloque
+                    st.markdown("<hr style='margin: 5
