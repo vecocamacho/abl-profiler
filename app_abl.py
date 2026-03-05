@@ -11,7 +11,11 @@ st.set_page_config(page_title="ABL Profiler - Jose Antonio Camacho", layout="cen
 
 def guardar_en_sheets(fila):
     try:
-        scope = ["https://www.googleapis.com/auth/spreadsheets"]
+        # Añadimos scopes de Drive y Sheets para tener permiso total de escritura
+        scope = [
+            "https://www.googleapis.com/auth/spreadsheets",
+            "https://www.googleapis.com/auth/drive"
+        ]
         creds = Credentials.from_service_account_info(st.secrets["gcp_service_account"], scopes=scope)
         client = gspread.authorize(creds)
         sheet = client.open("Resultados_ABL").sheet1
