@@ -11,7 +11,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- 2. INICIALIZACIÓN DE ESTADO (MEMORIA DEL TEST) ---
+# --- 2. INICIALIZACIÓN DE ESTADO ---
 if 'paso' not in st.session_state:
     st.session_state.paso = 0
 if 'respuestas' not in st.session_state:
@@ -39,7 +39,7 @@ with col_m2:
     st.markdown("<p style='margin-top: -10px;'>Knowledgism ABL Profiler <b>By Jose Antonio Camacho (veco)</b></p>", unsafe_allow_html=True)
     st.markdown("<p style='color: gray; font-style: italic; margin-top: -15px; font-size: 0.8em;'>Análisis Profesional de Capacidades</p>", unsafe_allow_html=True)
 
-# --- 4. DICCIONARIO DE PREGUNTAS COMPLETO ---
+# --- 4. DICCIONARIO DE PREGUNTAS ---
 PREGUNTAS_ES = {
     1: "¿Se siente bien consigo mismo?", 2: "¿Se le ocurren cosas para hacer?",
     3: "Si encontrara una billetera, ¿la devolvería?", 4: "¿Recuerda fácilmente lo que lee?",
@@ -73,32 +73,4 @@ PREGUNTAS_ES = {
     59: "¿Prefiere quedarse con lo que ya conoce?", 60: "¿Se mantiene al tanto de los asuntos actuales?",
     61: "¿Le pone nervioso dar un discurso?", 62: "¿Sus metas se alinean con las de su círculo?",
     63: "¿Puede el carácter de alguien cambiar para mejor?", 64: "¿Tiene períodos de inactividad?",
-    65: "¿Promueve a amigos por encima de las cualificaciones?", 66: "¿Es sensible o susceptible ante muchas cosas?",
-    67: "¿Dramatiza las emociones para salirse con la suya?", 68: "¿Sus creencias influyen en sus decisiones?",
-    69: "¿Se siente inquieto en entornos desordenados?", 70: "¿Alguien lo consideraría activo?",
-    71: "¿Se siente deprimido a menudo?", 72: "¿Es difícil de complacer?",
-    73: "¿Cree que la gente tiene más puntos malos que buenos?", 74: "¿Comete a menudo errores por descuido?"
-}
-
-PREGUNTAS_NEGATIVAS = [5, 7, 8, 9, 10, 11, 13, 16, 18, 19, 20, 22, 23, 24, 25, 26, 29, 40, 41, 43, 46, 47, 48, 50, 51, 52, 55, 58, 61, 64, 65, 66, 67, 68, 71, 72, 73, 74]
-
-CATEGORIAS = {
-    "Percepción (Tú)": range(1, 14),
-    "Metas / Querer": range(14, 26),
-    "Intención / Sueño": range(26, 38),
-    "Visión": range(38, 50),
-    "Mente": range(50, 62),
-    "Cuerpo": range(62, 75)
-}
-
-# --- 5. LÓGICA DE NAVEGACIÓN ---
-nombres_cats = list(CATEGORIAS.keys())
-
-if not st.session_state.finalizado:
-    nombre = st.text_input("Nombre del Evaluado", placeholder="Escriba aquí...", key="input_nombre")
-    
-    cat_actual = nombres_cats[st.session_state.paso]
-    rango_actual = CATEGORIAS[cat_actual]
-
-    progreso_val = (st.session_state.paso + 1) / len(nombres_cats)
-    st.progress(progreso_val, text=f"Sección {st.session_state.paso + 1} de {len
+    65: "¿Prom
