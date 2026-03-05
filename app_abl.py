@@ -10,11 +10,24 @@ if 'paso' not in st.session_state: st.session_state.paso = 0
 if 'respuestas' not in st.session_state: st.session_state.respuestas = {i: "Tal vez" for i in range(1, 75)}
 if 'finalizado' not in st.session_state: st.session_state.finalizado = False
 
-# 2. CABECERA
-if os.path.exists("logo.png"): st.image("logo.png", width=400)
-st.title("Perfil ABL")
-st.markdown("By **Jose Antonio Camacho (veco)**")
+# 2. CABECERA CON ESTILO
+c1, c2, c3 = st.columns([1, 2, 1])
+with c2:
+    if os.path.exists("logo.png"):
+        st.image("logo.png", use_container_width=True)
+
 st.divider()
+
+col_m1, col_m2 = st.columns([0.2, 0.8])
+with col_m1:
+    if os.path.exists("logo_mini.png"):
+        st.image("logo_mini.png", width=70)
+    else:
+        st.write("## 🚀")
+
+with col_m2:
+    st.markdown("<h1 style='margin-top: -5px; padding-bottom: 0;'>Perfil ABL</h1>", unsafe_allow_html=True)
+    st.markdown(f"<p style='margin-top: -10px;'>Knowledgism ABL Profiler <b>By Jose Antonio Camacho (veco)</b></p>", unsafe_allow_html=True)
 
 # 3. PREGUNTAS
 P = {
